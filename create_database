@@ -1,0 +1,4 @@
+CREATE DATABASE testdb;
+CREATE USER 'prouser'@'localhost' IDENTIFIED BY 'techradarpass';
+GRANT ALL PRIVILEGES ON techradar.* TO 'prouser'@'localhost';
+FLUSH PRIVILEGES;
