@@ -1,11 +1,31 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
+interface Article {
+  id: number
+  title: string
+  url: string
+  summary: string | null
+  published_at: string
+}
+
+const articles = ref<Article[]>([])
+
+onMounted(async () => {
+  const response = await fetch('http://127.0.0.1:8000/api/articles')
+  const data = await response.json()
+  articles.value = data
+  console.log(data)
+})
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <h1>TechRadar</h1>
+  <ul>
+    <li v-for="article in articles" :key="article.id">
+      <h2>{{ article.title }}</h2>
+      <p>{{ article.summary ?? 'Résumé non disponible' }}</p>
+      <a :href="article.url" target="_blank">Lire l'article</a>
+    </li>
+  </ul>
 </template>
-
-<style scoped></style>
