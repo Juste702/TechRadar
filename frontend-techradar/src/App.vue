@@ -20,7 +20,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h1>TechRadar</h1>
+  <h1 class="text-3xl font-bold text-blue-600">TechRadar</h1>
   <ul>
     <li v-for="article in articles" :key="article.id">
       <h2>{{ article.title }}</h2>
