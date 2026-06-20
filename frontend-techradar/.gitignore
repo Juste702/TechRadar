@@ -1,39 +1,30 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+/vendor/
+node_modules/
+npm-debug.log
+yarn-error.log
 
-node_modules
-.DS_Store
-dist
-dist-ssr
-coverage
-*.local
+# Laravel 4 specific
+bootstrap/compiled.php
+app/storage/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Laravel 5 & Lumen specific
+public/storage
+public/hot
 
-*.tsbuildinfo
+# Laravel 5 & Lumen specific with changed public path
+public_html/storage
+public_html/hot
 
-.eslintcache
+storage/*.key
+.env
+Homestead.yaml
+Homestead.json
+/.vagrant
+.phpunit.result.cache
 
-# Cypress
-/cypress/videos/
-/cypress/screenshots/
-
-# Vitest
-__screenshots__/
-
-# Vite
-*.timestamp-*-*.mjs
+/public/build
+/storage/pail
+.env.backup
+.env.production
+.phpactor.json
+auth.json

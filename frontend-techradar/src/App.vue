@@ -12,7 +12,7 @@ interface Article {
 const articles = ref<Article[]>([])
 
 onMounted(async () => {
-  const response = await fetch('http://127.0.0.1:8000/api/articles')
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/api/articles`)
   const data = await response.json()
   articles.value = data
   console.log(data)
