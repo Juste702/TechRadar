@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import type { Tag } from '@/types/article'
 
 defineProps<{
   tags: Tag[]
 }>()
+
+const { t } = useI18n()
 
 const selectedTag = defineModel<string | null>({ required: true })
 
@@ -13,14 +16,14 @@ const inactiveClass = 'border-gray-700 text-gray-400 hover:border-blue-500 hover
 </script>
 
 <template>
-  <nav aria-label="Filtrer par tag" class="flex flex-wrap gap-2 mb-8">
+  <nav :aria-label="t('tags.label')" class="flex flex-wrap gap-2 mb-8">
     <button
       type="button"
       :class="[baseClass, selectedTag === null ? activeClass : inactiveClass]"
       :aria-pressed="selectedTag === null"
       @click="selectedTag = null"
     >
-      Tous
+      {{ t('tags.all') }}
     </button>
     <button
       v-for="tag in tags"

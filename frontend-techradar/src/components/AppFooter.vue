@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const currentYear = new Date().getFullYear()
 </script>
 
@@ -8,7 +11,7 @@ const currentYear = new Date().getFullYear()
       class="max-w-7xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500"
     >
       <p>
-        Articles fournis par
+        {{ t('footer.providedBy') }}
         <a
           href="https://dev.to"
           target="_blank"

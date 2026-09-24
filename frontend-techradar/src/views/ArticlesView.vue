@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import TagFilter from '@/components/TagFilter.vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import ArticleCardSkeleton from '@/components/ArticleCardSkeleton.vue'
@@ -9,6 +10,7 @@ import { useTags } from '@/composables/useTags'
 
 const SKELETON_COUNT = 6
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
@@ -27,19 +29,18 @@ const { tags } = useTags()
 const { articles, total, isLoading, isLoadingMore, error, hasMore, reload, loadMore } =
   useArticles(selectedTag)
 
-const countLabel = computed(() => {
-  if (isLoading.value) return 'Chargement…'
-  return total.value > 1 ? `${total.value} articles` : `${total.value} article`
-})
+const countLabel = computed(() =>
+  isLoading.value ? t('articles.loading') : t('articles.count', total.value),
+)
 </script>
 
 <template>
   <div class="max-w-7xl mx-auto px-6 py-10">
     <div class="flex items-end justify-between gap-4 mb-6">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight">Articles</h1>
+        <h1 class="text-2xl font-bold tracking-tight">{{ t('articles.title') }}</h1>
         <p class="text-gray-400 text-sm mt-1">
-          Les dernières publications, des plus récentes aux plus anciennes
+          {{ t('articles.subtitle') }}
         </p>
       </div>
       <span
@@ -56,7 +57,7 @@ const countLabel = computed(() => {
       v-if="isLoading"
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       role="status"
-      aria-label="Chargement des articles"
+      :aria-label="t('articles.loadingAria')"
     >
       <ArticleCardSkeleton v-for="n in SKELETON_COUNT" :key="n" />
     </div>
@@ -66,18 +67,18 @@ const countLabel = computed(() => {
       role="alert"
       class="max-w-md mx-auto text-center border border-red-900 bg-red-950/40 rounded-lg p-6"
     >
-      <p class="text-red-300 mb-4">{{ error }}</p>
+      <p class="text-red-300 mb-4">{{ t(error) }}</p>
       <button
         type="button"
         class="px-4 py-2 rounded bg-blue-500 hover:bg-blue-400 text-white text-sm transition-colors duration-200"
         @click="reload"
       >
-        Réessayer
+        {{ t('articles.retry') }}
       </button>
     </div>
 
     <p v-else-if="articles.length === 0" class="text-center text-gray-400">
-      Aucun article pour le moment. Revenez après la prochaine synchronisation.
+      {{ t('articles.empty') }}
     </p>
 
     <template v-else>
@@ -86,7 +87,7 @@ const countLabel = computed(() => {
       </div>
 
       <div class="mt-10 flex flex-col items-center gap-3">
-        <p v-if="error" role="alert" class="text-sm text-red-300">{{ error }}</p>
+        <p v-if="error" role="alert" class="text-sm text-red-300">{{ t(error) }}</p>
         <button
           v-if="hasMore"
           type="button"
@@ -94,9 +95,11 @@ const countLabel = computed(() => {
           class="px-5 py-2 rounded-full border border-blue-500 text-blue-400 text-sm hover:bg-blue-500 hover:text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-wait"
           @click="loadMore"
         >
-          {{ isLoadingMore ? 'Chargement…' : 'Charger plus' }}
+          {{ isLoadingMore ? t('articles.loading') : t('articles.loadMore') }}
         </button>
-        <p class="text-xs text-gray-500">{{ articles.length }} sur {{ total }}</p>
+        <p class="text-xs text-gray-500">
+          {{ t('articles.progress', { loaded: articles.length, total }) }}
+        </p>
       </div>
     </template>
   </div>

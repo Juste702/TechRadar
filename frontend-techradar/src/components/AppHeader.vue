@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import LocaleSwitcher from './LocaleSwitcher.vue'
+
+const { t } = useI18n()
 
 // RouterLink pose aria-current="page" sur le lien actif : on s'en sert pour le style
 const linkClass =
@@ -12,10 +16,15 @@ const linkClass =
       <RouterLink :to="{ name: 'home' }" class="text-xl font-bold tracking-tight">
         Tech<span class="text-blue-500">Radar</span>
       </RouterLink>
-      <nav aria-label="Navigation principale" class="flex items-center gap-6">
-        <RouterLink :to="{ name: 'home' }" :class="linkClass">Accueil</RouterLink>
-        <RouterLink :to="{ name: 'articles' }" :class="linkClass">Articles</RouterLink>
-      </nav>
+      <div class="flex items-center gap-6">
+        <nav :aria-label="t('nav.label')" class="flex items-center gap-6">
+          <RouterLink :to="{ name: 'home' }" :class="linkClass">{{ t('nav.home') }}</RouterLink>
+          <RouterLink :to="{ name: 'articles' }" :class="linkClass">
+            {{ t('nav.articles') }}
+          </RouterLink>
+        </nav>
+        <LocaleSwitcher />
+      </div>
     </div>
   </header>
 </template>

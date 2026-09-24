@@ -8,6 +8,7 @@ export function useArticles(tag: Ref<string | null>) {
   const lastPage = ref(0)
   const isLoading = ref(true)
   const isLoadingMore = ref(false)
+  /** Clé i18n du message d'erreur, traduite par la vue */
   const error = ref<string | null>(null)
 
   const hasMore = computed(() => currentPage.value < lastPage.value)
@@ -63,7 +64,7 @@ export function useArticles(tag: Ref<string | null>) {
       // Requête remplacée par une plus récente : c'est elle qui mettra l'état à jour
       if (isAbort(e)) return
       console.error('Échec du chargement des articles', e)
-      error.value = 'Impossible de charger les articles. Vérifiez que l’API est lancée.'
+      error.value = 'articles.errors.load'
       isLoading.value = false
     }
   }
@@ -78,7 +79,7 @@ export function useArticles(tag: Ref<string | null>) {
     } catch (e) {
       if (isAbort(e)) return
       console.error('Échec du chargement de la page suivante', e)
-      error.value = 'Impossible de charger plus d’articles.'
+      error.value = 'articles.errors.loadMore'
       isLoadingMore.value = false
     }
   }

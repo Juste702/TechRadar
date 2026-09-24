@@ -1,14 +1,29 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import type { Locale } from '@/i18n'
 import type { Article } from '@/types/article'
-import { formatFullDate, formatRelativeDate } from '@/utils/date'
+import { formatFullDate, formatRelativeDate, languageName } from '@/utils/date'
 
 const props = defineProps<{
   article: Article
 }>()
 
+const { t, locale } = useI18n()
+
 const publishedAt = computed(() =>
   props.article.published_at ? new Date(props.article.published_at) : null,
+)
+
+// Traduction dans la langue du site, sauf si l'article est déjà dans cette langue
+const translation = computed(() => {
+  if (props.article.language === locale.value) return null
+  return props.article.translations?.[locale.value as Locale] ?? null
+})
+
+const title = computed(() => translation.value?.title ?? props.article.title)
+const summary = computed(() =>
+  translation.value ? translation.value.summary : props.article.summary,
 )
 </script>
 
@@ -26,15 +41,18 @@ const publishedAt = computed(() =>
         <time
           v-if="publishedAt"
           :datetime="article.published_at ?? undefined"
-          :title="formatFullDate(publishedAt)"
+          :title="formatFullDate(publishedAt, locale)"
           class="text-xs text-gray-500"
         >
-          {{ formatRelativeDate(publishedAt) }}
+          {{ formatRelativeDate(publishedAt, locale) }}
         </time>
       </div>
-      <h2 class="text-lg font-semibold mb-2 line-clamp-3">{{ article.title }}</h2>
+      <h2 class="text-lg font-semibold mb-2 line-clamp-3">{{ title }}</h2>
       <p class="text-gray-400 text-sm">
-        {{ article.summary ?? 'Résumé non disponible' }}
+        {{ summary ?? t('article.noSummary') }}
+      </p>
+      <p v-if="translation && article.language" class="text-xs text-gray-500 italic mt-2">
+        {{ t('article.machineTranslated', { language: languageName(article.language, locale) }) }}
       </p>
       <ul v-if="article.tags?.length" class="flex flex-wrap gap-x-2 gap-y-1 mt-3">
         <li v-for="tag in article.tags" :key="tag" class="text-xs text-gray-500">#{{ tag }}</li>
@@ -46,7 +64,7 @@ const publishedAt = computed(() =>
       rel="noopener noreferrer"
       class="text-blue-400 text-sm mt-4 hover:underline"
     >
-      Lire l'article →
+      {{ t('article.read') }}
     </a>
   </article>
 </template>
