@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import AppHeader from './components/AppHeader.vue'
+import AppFooter from './components/AppFooter.vue'
 
 interface Article {
   id: number
@@ -22,10 +23,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-900 text-white">
+  <div class="min-h-screen flex flex-col bg-gray-900 text-white">
     <AppHeader :article-count="articles.length" />
 
-    <main class="max-w-7xl mx-auto px-6 py-10">
+    <main class="flex-1 w-full max-w-7xl mx-auto px-6 py-10">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
           v-for="article in articles"
@@ -49,5 +50,7 @@ onMounted(async () => {
         </div>
       </div>
     </main>
+
+    <AppFooter />
   </div>
 </template>
