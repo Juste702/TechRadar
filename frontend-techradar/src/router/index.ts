@@ -18,8 +18,11 @@ const router = createRouter({
       meta: { title: 'Articles — TechRadar' },
     },
   ],
-  scrollBehavior(_to, _from, savedPosition) {
-    return savedPosition ?? { top: 0 }
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition
+    // Seule la query change (ex. filtre par tag) : on reste où on est
+    if (to.path === from.path) return false
+    return { top: 0 }
   },
 })
 

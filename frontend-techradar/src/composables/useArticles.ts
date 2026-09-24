@@ -1,4 +1,4 @@
-import { ref, computed, watch, onMounted, type Ref } from 'vue'
+import { ref, computed, watch, onMounted, onScopeDispose, type Ref } from 'vue'
 import type { Article, Paginated } from '@/types/article'
 
 export function useArticles(tag: Ref<string | null>) {
@@ -85,6 +85,8 @@ export function useArticles(tag: Ref<string | null>) {
 
   onMounted(reload)
   watch(tag, reload)
+  // En quittant la page, on abandonne la requête en cours : sa réponse ne servirait plus à rien
+  onScopeDispose(() => controller?.abort())
 
   return { articles, total, isLoading, isLoadingMore, error, hasMore, reload, loadMore }
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import TagFilter from '@/components/TagFilter.vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import ArticleCardSkeleton from '@/components/ArticleCardSkeleton.vue'
@@ -8,7 +9,20 @@ import { useTags } from '@/composables/useTags'
 
 const SKELETON_COUNT = 6
 
-const selectedTag = ref<string | null>(null)
+const route = useRoute()
+const router = useRouter()
+
+// L'URL est la source de vérité : /articles?tag=php est partageable et survit au rechargement
+const selectedTag = computed<string | null>({
+  get: () => {
+    const tag = route.query.tag
+    return typeof tag === 'string' && tag !== '' ? tag : null
+  },
+  set: (tag) => {
+    // replace plutôt que push : changer de filtre n'empile pas d'entrées dans l'historique
+    router.replace({ query: { ...route.query, tag: tag ?? undefined } })
+  },
+})
 const { tags } = useTags()
 const { articles, total, isLoading, isLoadingMore, error, hasMore, reload, loadMore } =
   useArticles(selectedTag)
