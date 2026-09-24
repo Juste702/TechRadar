@@ -1,44 +1,29 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
 import TagFilter from './components/TagFilter.vue'
 import ArticleCard from './components/ArticleCard.vue'
 import ArticleCardSkeleton from './components/ArticleCardSkeleton.vue'
 import { useArticles } from './composables/useArticles'
+import { useTags } from './composables/useTags'
 
-const MAX_TAGS = 15
 const SKELETON_COUNT = 6
 
-const { articles, isLoading, error, reload } = useArticles()
 const selectedTag = ref<string | null>(null)
-
-// Tags triés par nombre d'articles, pour afficher les plus utiles en premier
-const availableTags = computed(() => {
-  const counts = new Map<string, number>()
-  for (const article of articles.value) {
-    for (const tag of article.tags ?? []) {
-      counts.set(tag, (counts.get(tag) ?? 0) + 1)
-    }
-  }
-  return [...counts.entries()]
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .slice(0, MAX_TAGS)
-    .map(([tag]) => tag)
-})
-
-const filteredArticles = computed(() => {
-  const tag = selectedTag.value
-  if (tag === null) return articles.value
-  return articles.value.filter((article) => article.tags?.includes(tag))
-})
+const { tags } = useTags()
+const { articles, total, isLoading, isLoadingMore, error, hasMore, reload, loadMore } =
+  useArticles(selectedTag)
 </script>
 
 <template>
   <div class="min-h-screen flex flex-col bg-gray-900 text-white">
-    <AppHeader :article-count="filteredArticles.length" :is-loading="isLoading" />
+    <AppHeader :article-count="total" :is-loading="isLoading" />
 
     <main class="flex-1 w-full max-w-7xl mx-auto px-6 py-10">
+      <!-- Hors des états de chargement : les filtres restent visibles pendant un changement de tag -->
+      <TagFilter v-if="tags.length" v-model="selectedTag" :tags="tags" />
+
       <div
         v-if="isLoading"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -49,7 +34,7 @@ const filteredArticles = computed(() => {
       </div>
 
       <div
-        v-else-if="error"
+        v-else-if="error && articles.length === 0"
         role="alert"
         class="max-w-md mx-auto text-center border border-red-900 bg-red-950/40 rounded-lg p-6"
       >
@@ -68,10 +53,22 @@ const filteredArticles = computed(() => {
       </p>
 
       <template v-else>
-        <TagFilter v-if="availableTags.length" v-model="selectedTag" :tags="availableTags" />
-
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <ArticleCard v-for="article in filteredArticles" :key="article.id" :article="article" />
+          <ArticleCard v-for="article in articles" :key="article.id" :article="article" />
+        </div>
+
+        <div class="mt-10 flex flex-col items-center gap-3">
+          <p v-if="error" role="alert" class="text-sm text-red-300">{{ error }}</p>
+          <button
+            v-if="hasMore"
+            type="button"
+            :disabled="isLoadingMore"
+            class="px-5 py-2 rounded-full border border-blue-500 text-blue-400 text-sm hover:bg-blue-500 hover:text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-wait"
+            @click="loadMore"
+          >
+            {{ isLoadingMore ? 'Chargement…' : 'Charger plus' }}
+          </button>
+          <p class="text-xs text-gray-500">{{ articles.length }} sur {{ total }}</p>
         </div>
       </template>
     </main>

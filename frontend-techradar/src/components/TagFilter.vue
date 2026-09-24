@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { Tag } from '@/types/article'
+
 defineProps<{
-  tags: string[]
+  tags: Tag[]
 }>()
 
 const selectedTag = defineModel<string | null>({ required: true })
@@ -22,13 +24,14 @@ const inactiveClass = 'border-gray-700 text-gray-400 hover:border-blue-500 hover
     </button>
     <button
       v-for="tag in tags"
-      :key="tag"
+      :key="tag.name"
       type="button"
-      :class="[baseClass, selectedTag === tag ? activeClass : inactiveClass]"
-      :aria-pressed="selectedTag === tag"
-      @click="selectedTag = selectedTag === tag ? null : tag"
+      :class="[baseClass, selectedTag === tag.name ? activeClass : inactiveClass]"
+      :aria-pressed="selectedTag === tag.name"
+      @click="selectedTag = selectedTag === tag.name ? null : tag.name"
     >
-      #{{ tag }}
+      #{{ tag.name }}
+      <span class="ml-1 opacity-60">{{ tag.count }}</span>
     </button>
   </nav>
 </template>
