@@ -4,28 +4,39 @@ namespace App\Services;
 
 use App\Models\Article;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ArticleFetcher
 {
+    private const DEVTO_TAGS = ['webdev', 'javascript', 'php', 'devops', 'ai'];
+
+    private const PER_TAG = 10;
+
     public function fetchFromDevTo(): void
     {
-        $response = Http::get('https://dev.to/api/articles', [
-            'tag' => 'webdev',
-            'per_page' => 10,
-        ]);
+        foreach (self::DEVTO_TAGS as $tag) {
+            $response = Http::timeout(10)->get('https://dev.to/api/articles', [
+                'tag' => $tag,
+                'per_page' => self::PER_TAG,
+            ]);
 
-        $articles = $response->json();
+            if ($response->failed()) {
+                Log::warning("Dev.to fetch failed for tag {$tag}", ['status' => $response->status()]);
+                continue;
+            }
 
-        foreach ($articles as $article) {
-            Article::updateOrCreate(
-                ['url' => $article['url']],
-                [
-                    'title' => $article['title'],
-                    'source' => 'devto',
-                    'tags' => $article['tag_list'] ?? [],
-                    'published_at' => \Carbon\Carbon::parse($article['published_at']),
-                ]
-            );
+            foreach ($response->json() as $article) {
+                Article::updateOrCreate(
+                    ['url' => $article['url']],
+                    [
+                        'title' => $article['title'],
+                        'source' => 'devto',
+                        'summary' => $article['description'] ?: null,
+                        'tags' => $article['tag_list'] ?? [],
+                        'published_at' => \Carbon\Carbon::parse($article['published_at']),
+                    ]
+                );
+            }
         }
     }
 }

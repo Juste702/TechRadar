@@ -8,7 +8,8 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        $articles = Article::all(['id', 'title', 'url', 'source', 'summary', 'tags', 'published_at']);
+        $articles = Article::orderByDesc('published_at')
+            ->get(['id', 'title', 'url', 'source', 'summary', 'tags', 'published_at']);
 
         return response()->json($articles);
     }
