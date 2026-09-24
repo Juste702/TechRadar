@@ -3,11 +3,13 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   articleCount: number
+  isLoading?: boolean
 }>()
 
-const countLabel = computed(() =>
-  props.articleCount > 1 ? `${props.articleCount} articles` : `${props.articleCount} article`,
-)
+const countLabel = computed(() => {
+  if (props.isLoading) return 'Chargement…'
+  return props.articleCount > 1 ? `${props.articleCount} articles` : `${props.articleCount} article`
+})
 </script>
 
 <template>
