@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
 import TagFilter from './components/TagFilter.vue'
+import ArticleCard from './components/ArticleCard.vue'
 import ArticleCardSkeleton from './components/ArticleCardSkeleton.vue'
 import { useArticles } from './composables/useArticles'
 
@@ -70,36 +71,7 @@ const filteredArticles = computed(() => {
         <TagFilter v-if="availableTags.length" v-model="selectedTag" :tags="availableTags" />
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div
-            v-for="article in filteredArticles"
-            :key="article.id"
-            class="bg-gray-800 rounded-lg p-5 flex flex-col justify-between border border-gray-700 hover:border-blue-500 transition-colors duration-200"
-          >
-            <div>
-              <span
-                class="inline-block text-xs uppercase tracking-wide text-blue-400 bg-blue-950 px-2 py-1 rounded mb-3"
-              >
-                {{ article.source }}
-              </span>
-              <h2 class="text-lg font-semibold mb-2 line-clamp-3">{{ article.title }}</h2>
-              <p class="text-gray-400 text-sm">
-                {{ article.summary ?? 'Résumé non disponible' }}
-              </p>
-              <ul v-if="article.tags?.length" class="flex flex-wrap gap-x-2 gap-y-1 mt-3">
-                <li v-for="tag in article.tags" :key="tag" class="text-xs text-gray-500">
-                  #{{ tag }}
-                </li>
-              </ul>
-            </div>
-            <a
-              :href="article.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-400 text-sm mt-4 hover:underline"
-            >
-              Lire l'article →
-            </a>
-          </div>
+          <ArticleCard v-for="article in filteredArticles" :key="article.id" :article="article" />
         </div>
       </template>
     </main>
