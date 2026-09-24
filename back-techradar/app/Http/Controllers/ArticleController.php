@@ -19,7 +19,7 @@ class ArticleController extends Controller
             ->when($validated['tag'] ?? null, fn ($query, $tag) => $query->whereJsonContains('tags', $tag))
             ->orderByDesc('published_at')
             ->orderByDesc('id')
-            ->paginate(self::PER_PAGE, ['id', 'title', 'url', 'source', 'summary', 'tags', 'published_at'])
+            ->paginate(self::PER_PAGE, ['id', 'title', 'url', 'source', 'summary', 'tags', 'language', 'translations', 'published_at'])
             ->withQueryString();
 
         return response()->json($articles);

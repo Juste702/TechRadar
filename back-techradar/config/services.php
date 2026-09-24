@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'deepl' => [
+        'key' => env('DEEPL_API_KEY'),
+        // Les clés gratuites (finissant par ":fx") utilisent api-free, les clés Pro api.deepl.com
+        'url' => env('DEEPL_API_URL', 'https://api-free.deepl.com'),
+    ],
+
 ];
