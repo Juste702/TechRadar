@@ -11,6 +11,11 @@ class Article extends Model
         'url',
         'source',
         'summary',
+        'tags',
         'published_at',
+    ];
+
+    protected $casts = [
+        'tags' => 'array',
     ];
 }

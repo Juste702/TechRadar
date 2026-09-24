@@ -22,6 +22,7 @@ class ArticleFetcher
                 [
                     'title' => $article['title'],
                     'source' => 'devto',
+                    'tags' => $article['tag_list'] ?? [],
                     'published_at' => \Carbon\Carbon::parse($article['published_at']),
                 ]
             );
